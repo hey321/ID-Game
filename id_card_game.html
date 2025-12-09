@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find the ID Card - Mini Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .drawer {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(to bottom, #8B4513 0%, #654321 100%);
+            border: 8px solid #5a3a1f;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .item {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 2em;
+            user-select: none;
+        }
+
+        .item:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .item.clicked {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px) rotate(-5deg); }
+            75% { transform: translateX(10px) rotate(5deg); }
+        }
+
+        .id-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+            border: 3px solid white;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .id-card.found {
+            animation: celebrate 1s;
+            z-index: 200;
+        }
+
+        @keyframes celebrate {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.3) rotate(360deg); }
+            100% { transform: scale(1) rotate(720deg); }
+        }
+
+        .controls {
+            text-align: center;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 0 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .message {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 20px;
+            min-height: 30px;
+            color: #667eea;
+        }
+
+        .message.win {
+            color: #4caf50;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .item-name {
+            font-size: 0.4em;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🔍 Find the ID Card</h1>
+        <p class="subtitle">Click on items in the messy drawer to find your ID card!</p>
+        
+        <div class="game-info">
+            <div class="info-item">
+                <div class="info-label">Clicks</div>
+                <div class="info-value" id="clicks">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Time</div>
+                <div class="info-value" id="time">0s</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Items Found</div>
+                <div class="info-value" id="found">0/1</div>
+            </div>
+        </div>
+
+        <div class="drawer" id="drawer"></div>
+
+        <div class="controls">
+            <button onclick="startNewGame()">🔄 New Game</button>
+        </div>
+
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        const items = [
+            { emoji: '📱', name: 'Phone' },
+            { emoji: '🔑', name: 'Keys' },
+            { emoji: '💳', name: 'Credit Card' },
+            { emoji: '📝', name: 'Note' },
+            { emoji: '✏️', name: 'Pen' },
+            { emoji: '📎', name: 'Paperclip' },
+            { emoji: '📌', name: 'Pin' },
+            { emoji: '🧷', name: 'Safety Pin' },
+            { emoji: '📄', name: 'Paper' },
+            { emoji: '📋', name: 'Clipboard' },
+            { emoji: '📇', name: 'Business Card' },
+            { emoji: '🎫', name: 'Ticket' },
+            { emoji: '💊', name: 'Pill' },
+            { emoji: '🪙', name: 'Coin' },
+            { emoji: '🧾', name: 'Receipt' },
+            { emoji: '🆔', name: 'ID Card', isIdCard: true }
+        ];
+
+        let gameState = {
+            clicks: 0,
+            startTime: null,
+            timer: null,
+            found: false,
+            itemsPlaced: []
+        };
+
+        function randomPosition() {
+            const drawer = document.getElementById('drawer');
+            const drawerWidth = drawer.offsetWidth - 80;
+            const drawerHeight = drawer.offsetHeight - 80;
+            return {
+                left: Math.random() * drawerWidth,
+                top: Math.random() * drawerHeight,
+                rotation: Math.random() * 360
+            };
+        }
+
+        function createItem(item, index) {
+            const div = document.createElement('div');
+            div.className = 'item';
+            if (item.isIdCard) {
+                div.classList.add('id-card');
+            }
+            
+            const pos = randomPosition();
+            div.style.left = pos.left + 'px';
+            div.style.top = pos.top + 'px';
+            div.style.transform = `rotate(${pos.rotation}deg)`;
+            
+            div.innerHTML = `
+                <div>${item.emoji}</div>
+                <div class="item-name">${item.name}</div>
+            `;
+            
+            div.onclick = () => handleItemClick(div, item);
+            
+            return div;
+        }
+
+        function handleItemClick(element, item) {
+            if (gameState.found) return;
+            
+            gameState.clicks++;
+            document.getElementById('clicks').textContent = gameState.clicks;
+            
+            element.classList.add('clicked');
+            setTimeout(() => element.classList.remove('clicked'), 500);
+            
+            if (item.isIdCard) {
+                gameState.found = true;
+                clearInterval(gameState.timer);
+                element.classList.add('found');
+                
+                const timeElapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+                document.getElementById('message').textContent = 
+                    `🎉 Congratulations! You found the ID card in ${gameState.clicks} clicks and ${timeElapsed} seconds!`;
+                document.getElementById('message').classList.add('win');
+            } else {
+                document.getElementById('message').textContent = `That's a ${item.name}, keep looking!`;
+                document.getElementById('message').classList.remove('win');
+            }
+        }
+
+        function startNewGame() {
+            const drawer = document.getElementById('drawer');
+            drawer.innerHTML = '';
+            
+            gameState.clicks = 0;
+            gameState.found = false;
+            gameState.itemsPlaced = [];
+            document.getElementById('clicks').textContent = '0';
+            document.getElementById('found').textContent = '0/1';
+            document.getElementById('message').textContent = '';
+            document.getElementById('message').classList.remove('win');
+            
+            // Shuffle items array
+            const shuffled = [...items].sort(() => Math.random() - 0.5);
+            
+            // Place all items
+            shuffled.forEach((item, index) => {
+                const element = createItem(item, index);
+                drawer.appendChild(element);
+                gameState.itemsPlaced.push({ element, item });
+            });
+            
+            // Start timer
+            gameState.startTime = Date.now();
+            if (gameState.timer) clearInterval(gameState.timer);
+            gameState.timer = setInterval(() => {
+                if (!gameState.found) {
+                    const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+                    document.getElementById('time').textContent = elapsed + 's';
+                }
+            }, 1000);
+        }
+
+        // Start the game when page loads
+        window.onload = startNewGame;
+    </script>
+</body>
+</html>
+
