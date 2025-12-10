@@ -10,7 +10,7 @@ public class IDCardGameManager : MonoBehaviour
     {
         public string name;
         public string emoji;
-        pubilc sprite emojin;
+     
         public bool isIdCard;
     }
 
@@ -26,22 +26,22 @@ public class IDCardGameManager : MonoBehaviour
     [Header("Game Settings")]
     [SerializeField] private List<ItemData> gameItems = new List<ItemData>
     {
-        new ItemData { name = "Phone", emojin = "📱", isIdCard = false },
-        new ItemData { name = "Keys", emojin = "🔑", isIdCard = false },
-        new ItemData { name = "Credit Card", emojin = "💳", isIdCard = false },
-        new ItemData { name = "Note", emojin= "📝", isIdCard = false },
-        new ItemData { name = "Pen", emojin = "✏️", isIdCard = false },
-        new ItemData { name = "Paperclip", emojin = "📎", isIdCard = false },
-        new ItemData { name = "Pin", emojin = "📌", isIdCard = false },
-        new ItemData { name = "Safety Pin", emojin = "🧷", isIdCard = false },
-        new ItemData { name = "Paper", emojin = "📄", isIdCard = false },
-        new ItemData { name = "Clipboard", emojin = "📋", isIdCard = false },
-        new ItemData { name = "Business Card", emojin = "📇", isIdCard = false },
-        new ItemData { name = "Ticket", emojin = "🎫", isIdCard = false },
-        new ItemData { name = "Pill", emojin = "💊", isIdCard = false },
-        new ItemData { name = "Coin", emojin = "🪙", isIdCard = false },
-        new ItemData { name = "Receipt", emojin = "🧾", isIdCard = false },
-        new ItemData { name = "ID Card", emojin = "🆔", isIdCard = true }
+        new ItemData { name = "Phone", emoji = "📱", isIdCard = false },
+        new ItemData { name = "Keys", emoji = "🔑", isIdCard = false },
+        new ItemData { name = "Credit Card", emoji = "💳", isIdCard = false },
+        new ItemData { name = "Note", emoji= "📝", isIdCard = false },
+        new ItemData { name = "Pen", emoji= "✏️", isIdCard = false },
+        new ItemData { name = "Paperclip", emoji = "📎", isIdCard = false },
+        new ItemData { name = "Pin", emoji = "📌", isIdCard = false },
+        new ItemData { name = "Safety Pin", emoji = "🧷", isIdCard = false },
+        new ItemData { name = "Paper", emoji = "📄", isIdCard = false },
+        new ItemData { name = "Clipboard", emoji = "📋", isIdCard = false },
+        new ItemData { name = "Business Card", emoji = "📇", isIdCard = false },
+        new ItemData { name = "Ticket", emoji = "🎫", isIdCard = false },
+        new ItemData { name = "Pill", emoji = "💊", isIdCard = false },
+        new ItemData { name = "Coin", emoji = "🪙", isIdCard = false },
+        new ItemData { name = "Receipt", emoji = "🧾", isIdCard = false },
+        new ItemData { name = "ID Card", emoji = "🆔", isIdCard = true }
     };
 
     private int clickCount = 0;
